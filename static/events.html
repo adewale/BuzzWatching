@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+
+<title>Buzz Watching</title>
+
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="author" content="Erwin Aligam - styleshout.com" />
+<meta name="description" content="Site Description Here" />
+<meta name="keywords" content="keywords, here" />
+<meta name="robots" content="index, follow, noarchive" />
+<meta name="googlebot" content="noarchive" />
+
+<link rel="stylesheet" type="text/css" media="screen" href="/css/screen.css" />
+
+</head>
+<body>
+<div id="wrap">
+
+	<a name="top"></a>
+
+	<!-- header -->
+	<div id="header">
+		<h1 id="logo-text"><a href="index.html" title="">Buzz Watching</a></h1>
+		<p id="intro">Slicing through the buzz, so you don't have to!</p>
+	</div>	
+	<!-- header ends -->
+	
+	<!-- content starts -->
+	<div id="content-outer" class="clear"><div id="content-wrap" >	
+		
+		<div class="content">
+			{% for event in events %}
+			<div class="post"></p>
+			  <p>
+			  <a href="{{event.profile_url}}"><img src="{{event.profile_image}}" height="50" width="50" class="float-left" /></a>
+			  <b>{{event.title}}</b> [<a href="{{event.source}}">source</a>]<br></br>
+			  <i>{{event.content}}</i>
+			  </p>
+			</div>
+			<br></br>
+			<hr>
+			{% endfor %}
+						
+						
+		
+		</div>
+						
+	<!-- content ends -->	
+	</div></div>	
+
+	<div id="footer-bottom">	
+		<p> |								
+			<a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> | 
+	   	    <a href="http://validator.w3.org/check/referer">XHTML</a> |
+			<a href="#top">Top</a>							
+			&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;
+			<a href="http://www.bluewebtemplates.com/" title="Website Templates">website templates</a> by <a href="http://www.styleshout.com/">styleshout</a>
+		</p>
+	</div>			
+
+<!-- wrap ends -->
+</div>
+</body>
+</html>
