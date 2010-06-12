@@ -18,55 +18,51 @@
 <script type="text/javascript">
   twttr.anywhere(function (T) {
     T.hovercards({
-      expanded: true 
+      expanded: true
     });
   });
 </script>
 
 </head>
 <body>
-<div id="wrap">
+  <div id="wrap">
+  	<div id="header">
+  		<h1><a href="index.html" title="">Buzz Watching</a></h1>
+  		<p>Slicing through the buzz, so you don't have to!</p>
+  	</div>
 
-	<a name="top"></a>
+  	<div id="last-updated">
+  	  <em>Last Update</em>,
+  	  <span class="date">Saturday, June 12, 2010</span>, 
+  	  <span class="time">12:40PM</span>
+  	</div>
 
-	<!-- header -->
-	<div id="header">
-		<h1 id="logo-text"><a href="index.html" title="">Buzz Watching</a></h1>
-		<p id="intro">Slicing through the buzz, so you don't have to!</p>
-	</div>	
-	<!-- header ends -->
-	
-	<!-- content starts -->
-	<div id="content-outer" class="clear"><div id="content-wrap" >	
-		
-		<div class="content">
-			{% for event in events %}
-			<div class="post"></p>
-			  <p>
-			  <a href="{{event.profile_url}}"><img src="{{event.profile_image}}" height="50" width="50" class="float-left" /></a>
-			  <i>{{event.content}}</i> [<a href="{{event.source}}">source</a>]
-			  </p>
-			</div>
-			<br></br>
-			<hr>
-			{% endfor %}
-		</div>
-						
-	<!-- content ends -->	
-	</div></div>	
+    <div id="events">
+  		{% for event in events %}
+  		<div class="event">
+  	    <a href="{{event.profile_url}}" rel="me external"><img src="{{event.profile_image}}" height="50" width="50" /></a>
+  	    <p>{{event.content}}</p>
+  	    [<a href="{{event.source}}">source</a>]
+  		</div>
+  		{% endfor %}
+  	</div>
 
-	<div id="footer-bottom">	
-		<p> |								
-			<a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a> | 
-	   	    <a href="http://validator.w3.org/check/referer">XHTML</a> |
-			<a href="#top">Top</a>							
-			&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;
-			<a href="http://www.bluewebtemplates.com/" title="Website Templates">website templates</a> by <a href="http://www.styleshout.com/">styleshout</a>
-		</p>
-	</div>			
+  	<div id="sidebar">
+  	  <h2>Top Contributors:</h2>
+  	  <ul>
+  	    <li><a href="#">username</a></li>
+  	    <li><a href="#">username</a></li>
+  	    <li><a href="#">username</a></li>
+  	    <li><a href="#">username</a></li>
+  	    <li><a href="#">username</a></li>
+  	  </ul>    
+  	</div>
 
-<!-- wrap ends -->
-</div>
+  	<div id="footer">
+      &copy; 2010 <a href="http://london.hackcamp.org.uk/" rel="external met">Hack Camp</a> | 
+      <a href="http://twitter.com/hackcamp" rel="me external">Contact</a>
+  	</div>
+
+  </div>
 </body>
 </html>
