@@ -7,6 +7,7 @@ from google.appengine.api import urlfetch
 from google.appengine.ext.webapp.util import run_wsgi_app
 import os
 import logging
+import iso8601
 
 from google.appengine.api.labs import taskqueue
 
@@ -17,6 +18,7 @@ MAX_TASK_RETRIES = 10
 class Event(db.Model):
     data = db.TextProperty()
     consumed = db.DateTimeProperty(auto_now_add=True)
+    created = db.DateTimeProperty()
 
     def inflate_json(self):
         self.json = simplejson.loads(self.data)
@@ -36,6 +38,9 @@ class Event(db.Model):
     def content(self):
         return self.json['object']['content']
 
+def parse_date(date_str):
+    return iso8601.parse_date(date_str)
+
 def handle_result_(rpc):
     pass
 def handle_result(rpc):
@@ -48,9 +53,9 @@ def handle_result(rpc):
     events = []
     for item in content['data']['items']:
         id = item['id']
-        updated = item['updated']
+        updated = parse_date(item['updated'])
         #logging.info('id: %s and updated: %s' % (id, updated))
-        event = Event(data = simplejson.dumps(item), key_name=id)
+        event = Event(data = simplejson.dumps(item), key_name=id, created=updated)
         events.append(event)
     db.put(events)
 
@@ -91,8 +96,8 @@ def get_events(event):
     taskqueue.add(url='/bgtasks', params={'event':'hackcamp', 'radius':500})
 
     query = Event.all()
-    query.order('-consumed')
-    events = query.fetch(10)
+    query.order('-created')
+    events = query.fetch(100)
     for event in events:
         event.inflate_json()
     return events
