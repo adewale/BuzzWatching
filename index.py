@@ -23,7 +23,7 @@ class Event(db.Model):
     def inflate_json(self):
         self.json = simplejson.loads(self.data)
 
-    def title(self):
+    def _title(self):
         return self.json['title']
 
     def source(self):

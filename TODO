@@ -1,0 +1,6 @@
+Add support for events other than hackcamp: store a keyword per found item and search for the keywords
+Remove the hard-coded reference to the Google London office's location
+Add in support for searching:
+Flickr
+Twitter
+
