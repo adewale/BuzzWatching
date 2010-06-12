@@ -1,0 +1,93 @@
+body {
+  background: url('/images/bgd-wood.png') repeat;
+}
+
+#wrap {
+  background: white url('/images/bgd-coffee.jpg') no-repeat top left;
+  margin: 60px auto;
+  width: 960px;
+  padding: 30px 15px;
+}
+
+#header,
+#footer {
+  text-align: center;
+}
+#header h1 {
+  font-size: 320%;
+}
+#header p {
+  font-size: 150%;
+}
+
+#header h1 a,
+#sidebar h2 {
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgb(0,0,0);
+}
+#sidebar h2 {
+  text-align: center;
+  padding-bottom: 0.5em;
+  margin-bottom: 5px;
+  border-bottom: 2px solid rgb(0,0,0);
+}
+body a {
+  color: rgb(200,0,0);
+  text-decoration: none;
+}
+body a:hover {
+  text-decoration: underline;
+}
+#footer {
+  clear: both;
+  padding-top: 10px;
+  color: rgb(200,0,0);
+}
+
+#last-updated {
+  font-style: italic;
+  text-align: center;
+  border-top: 2px solid rgb(0,0,0);
+  border-bottom: 2px solid rgb(0,0,0);
+  padding: 2px 0;
+  margin: 10px 0;
+}
+#last-updated .date {
+  font-style: none;
+  font-weight: bold;
+}
+#events {
+  width: 700px;
+  float: left;
+}
+#sidebar {
+  float: left;
+  width: 235px;
+  margin-right: 20px;
+}
+#sidebar li a {
+  display: block;
+  border-top: 1px solid rgb(0,0,0);
+  padding: 1em 20px;
+}
+.event {
+  min-height: 70px;
+  position: relative;
+  padding: 10px 10px 10px 75px;
+  margin: 5px 20px 0;
+  border-top: 1px solid rgb(0,0,0);
+  border-bottom: 2px solid rgb(0,0,0);
+}
+.event:first-child {
+  border-top: none
+}
+.event img {
+  border: 1px solid rgb(222,222,222);
+  padding: 5px;
+  float: left;
+  margin-left: -75px;
+}
+.event p {
+  display: inline;
+}
