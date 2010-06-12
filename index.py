@@ -65,12 +65,20 @@ def create_callback(rpc):
 def find_events(search_term, radius):
     # This: http://json-indent.appspot.com/indent?url=https://www.googleapis.com/buzz/v1/activities/search%3Flat%3D51.49510480761027%26lon%3D-0.1463627815246582%26radius%3D500%26alt%3Djson is easier to read
     # Pull in all hits for hackcamp or activities which are within radius of the office
+    lat = 51.49510480761027
+    lon = -0.1463627815246582
     urls = []
-    radius_search = 'https://www.googleapis.com/buzz/v1/activities/search?lat=51.49510480761027&lon=-0.1463627815246582&radius=%s&alt=json' % radius
+    radius_search = 'https://www.googleapis.com/buzz/v1/activities/search?lat=%s&lon=%s&radius=%s&alt=json' % (lat,lon,radius)
     urls.append(radius_search)
     term_search = 'https://www.googleapis.com/buzz/v1/activities/search?q=%s&alt=json' % search_term
     urls.append(term_search)
     
+    # Twitter search - watch those rate limits!
+    radius_search = 'http://search.twitter.com/search.json?geocode=%s,%s,%skm' % (lat,lon,1 if radius/1000 < 1 else radius/1000)
+    urls.append(radius_search)
+    term_search = 'http://search.twitter.com/search.json?q=%%23%s' % search_term
+    urls.append(term_search)
+        
     # Basic idea comes straight from: http://code.google.com/appengine/docs/python/urlfetch/asynchronousrequests.html
     rpcs = []
     for url in urls:
