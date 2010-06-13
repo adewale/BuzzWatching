@@ -8,7 +8,6 @@ body {
   width: 960px;
   padding: 30px 15px;
 }
-
 #header,
 #footer {
   text-align: center;
@@ -17,7 +16,14 @@ body {
   font-size: 320%;
 }
 #header p {
+  display: inline;
   font-size: 150%;
+  background: white url('/images/right-decal.png') no-repeat center right;
+  padding-right: 35px;
+}
+#header p span {
+  background: white url('/images/left-decal.png') no-repeat center left;
+  padding-left: 35px;
 }
 
 #header h1 a,
@@ -54,7 +60,7 @@ body a:hover {
   margin: 10px 0;
 }
 #last-updated .date {
-  font-style: none;
+  font-style: normal;
   font-weight: bold;
 }
 #events {
