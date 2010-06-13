@@ -76,7 +76,6 @@ def parse_buzz(content):
     for item in content['data']['items']:
         id = item['id']
         updated = parse_date(item['updated'])
-        #logging.info('id: %s and updated: %s' % (id, updated))
         event = Event(data = simplejson.dumps(item), key_name=id, created=updated)
         events.append(event)
     return events
@@ -96,72 +95,58 @@ def parse_twitter(content):
         )
         created = parse_date(created)
         
-        #logging.info('id: %s and updated: %s' % (id, updated))
         event = Event(data = simplejson.dumps(item), key_name=id, created=created)
         events.append(event)
     return events
 
-def handle_result_(rpc):
-    pass
-def handle_result(rpc):
-    result = rpc.get_result()
+def handle_result(rpc, url):
+    try:
+        result = rpc.get_result()
+    except urlfetch.DownloadError, e:
+        logging.error('Unable to download %s due to %s' % (url, e))
+        return []
     logging.info('Result of rpc had status: %s' % result.status_code)
     content = simplejson.loads(result.content)
 
     if not has_data(content):
-        return
+        return []
 
     fx = 'parse_%s' % content['source']
     if fx in globals():
         events = globals()[fx](content)
-        db.put(events)
+        return events
 
-def create_callback(rpc):
-    return lambda: handle_result(rpc)
 
-def find_events(search_term, radius):
-    # This: http://json-indent.appspot.com/indent?url=https://www.googleapis.com/buzz/v1/activities/search%3Flat%3D51.49510480761027%26lon%3D-0.1463627815246582%26radius%3D500%26alt%3Djson is easier to read
-    # Pull in all hits for hackcamp or activities which are within radius of the office
-    lat = '51.49510480761027'
-    lon = '-0.1463627815246582'
+def find_events(search_term):
     urls = []
-    radius_search = 'https://www.googleapis.com/buzz/v1/activities/search?lat=%s&lon=%s&radius=%s&alt=json' % (lat,lon,radius)
-    urls.append(radius_search)
     term_search = 'https://www.googleapis.com/buzz/v1/activities/search?q=%s&alt=json' % search_term
     urls.append(term_search)
 
     # Twitter search - watch those rate limits!
-    r = int(radius)/1000
-    r = 1 if r < 1 else r
-    r = str(r)
-    radius_search = 'http://search.twitter.com/search.json?geocode=%s,%s,%skm' % (lat,lon,r)
-    urls.append(radius_search)
     term_search = 'http://search.twitter.com/search.json?q=%s' % search_term
     urls.append(term_search)
 
-    # Basic idea comes straight from: http://code.google.com/appengine/docs/python/urlfetch/asynchronousrequests.html
     rpcs = []
     for url in urls:
         rpc = urlfetch.create_rpc()
-        rpc.callback = create_callback(rpc)
         urlfetch.make_fetch_call(rpc, url)
-        rpcs.append(rpc)
+        rpcs.append((rpc, url))
 
     # Process all the async calls and wait for stragglers
-    for rpc in rpcs:
-        rpc.wait()
+    all_events = []
+    for rpc, url in rpcs:
+        all_events.extend(handle_result(rpc, url))
+    db.put(all_events)
 
 def get_events(event):
     # TODO
     # Make this a background task
-    # Stop hardcoding the event and the location
+    # Stop hardcoding the event
     logging.info('event was <%s>' % event)
     tokens = event.split('/')
     if len(tokens) > 1:
         event = tokens[1]
-    #find_events('hackcamp', 500)
-    #find_events(event, 500)
-    taskqueue.add(url='/bgtasks', params={'event':'hackcamp', 'radius':500})
+    taskqueue.add(url='/bgtasks', params={'event':'hackcamp'})
 
     query = Event.all()
     query.order('-created')
@@ -197,8 +182,7 @@ class BackGroundTaskHandler(webapp.RequestHandler):
 			logging.warning("Abandoning this task: %s after %s retries" % (taskName, retryCount))
 			return
                 event_name  = self.request.get('event')
-                radius = self.request.get('radius')
-		find_events(event_name, radius)
+		find_events(event_name)
 handlers = [
 ('/bgtasks', BackGroundTaskHandler),
 ('/events/(.*)', EventTagHandler),
