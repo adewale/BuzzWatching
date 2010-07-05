@@ -1,4 +1,4 @@
-application: micrypt-buzzwatching
+application: buzzwatching
 version: 1
 runtime: python
 api_version: 1
