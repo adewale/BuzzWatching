@@ -1,4 +1,17 @@
+TODO
+=====
 Add support for events other than hackcamp: store a keyword per found item and search for the keywords
-Remove the hard-coded reference to the Google London office's location
 Add in support for searching:
 Flickr
+Identica
+
+
+HACKS
+=====
+- When a user visits the event page we kick off a background task to perform the search. This means we're doing 1 search per service per user. We should either use a task name that's based on the time (so that we only ever do 1 search per user per time block (e.g. 120 seconds) or do something clever like setting up a repeating background task per event. This would require some means of event registration, a way to rate-limit the searches and a way to stop people creating spammy events.
+- HackCamp is hard-coded in.
+- The template mentions top posters (per event) but we don't actually have that
+- We render all content as if it were the same when we should look at the JSON object and render photos differently.
+- There's no handling of spam or consideration of DOS issues.
+- There's no paging or mechanism for looking at past data for the event.
+- 
