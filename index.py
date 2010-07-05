@@ -9,6 +9,7 @@ import os
 import logging
 import iso8601
 import time
+import urllib
 
 from google.appengine.api.labs import taskqueue
 
@@ -30,26 +31,34 @@ class Event(db.Model):
     def source(self):
         if self.json.has_key('object'):
             return self.json['object']['links']['alternate'][0]['href']
-        else:
+        elif self.json.has_key('from_user'):
             return u'http://twitter.com/%s/statuses/%s' % (self.json['from_user'], self.json['id'])
+        else:
+            return u'http://www.flickr.com/photos/%s/%s' % (self.json['owner']['username'], self.json['id'])
 
     def profile_image(self):
         if self.json.has_key('actor'):
             return self.json['actor']['thumbnailUrl']
-        else:
+        elif self.json.has_key('from_user'):
             return self.json['profile_image_url']
+        else:
+            return u'http://farm%s.static.flickr.com/%s/buddyicons/%s.jpg' % (self.json['farm'], self.json['server'], self.json['owner']['nsid'])
 
     def profile_url(self):
         if self.json.has_key('actor'):
             return self.json['actor']['profileUrl']
-        else:
+        elif self.json.has_key('from_user'):
             return u'http://twitter.com/%s' % self.json['from_user']
+        else:
+            return u'http://www.flickr.com/photos/%s' % (self.json['owner']['nsid'])
 
     def content(self):
         if self.json.has_key('object'):
             return self.json['object']['content']
-        else:
+        if self.json.has_key('text'):
             return self.json['text']
+        elif self.json.has_key('title'):
+            return self.json['title']
         
 
 def parse_date(date_str):
@@ -64,8 +73,13 @@ def has_data(content):
         return True
 
     # twitter
-    if content['results']:
+    if content.has_key('results'):
         content['source'] = 'twitter'
+        return True
+
+    # flickr
+    if content.has_key('query') and content['query'].has_key('results'):
+        content['source'] = 'flickr'
         return True
 
     return False
@@ -99,6 +113,16 @@ def parse_twitter(content):
         events.append(event)
     return events
 
+def parse_flickr(content):
+    # flickr
+    events = []
+    for item in content['query']['results']['photo']:
+        id = str(item['id'])
+        taken = parse_date(item['dates']['taken'])
+        event = Event(data = simplejson.dumps(item), key_name=id, created=taken)
+        events.append(event)
+    return events
+
 def handle_result(rpc, url):
     try:
         result = rpc.get_result()
@@ -124,6 +148,10 @@ def find_events(search_term):
 
     # Twitter search - watch those rate limits!
     term_search = 'http://search.twitter.com/search.json?q=%s' % search_term
+    urls.append(term_search)
+
+    # Flickr search - Using YQL as Flickr's API actually wants an API key for search and returns very little as a response! How rude...
+    term_search = 'http://query.yahooapis.com/v1/public/yql?q='+ urllib.quote('select id, owner, server , farm , title , dates , secret ,  urls  from flickr.photos.info where photo_id in (select id from flickr.photos.search where text') + '="%s")&format=json' % search_term
     urls.append(term_search)
 
     rpcs = []
